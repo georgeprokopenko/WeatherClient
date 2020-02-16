@@ -37,13 +37,13 @@ final class NetworkProvider<T>: MoyaProvider<T> where T: TargetType {
         return super.request(target) { result in
             switch result {
             case .success(let response):
-                let container = try!
+                if let container = try?
                     JSONDecoder().decode(T.self,
-                                         from: response.data)
+                                         from: response.data) {
                     completion(container, nil)
-//                } else {
-//                    completion(nil, .parsingError)
-//                }
+                } else {
+                    completion(nil, .parsingError)
+                }
             case .failure:
                 completion(nil, .serverError)
             }
