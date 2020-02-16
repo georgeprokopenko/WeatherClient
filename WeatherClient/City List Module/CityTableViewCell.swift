@@ -13,16 +13,14 @@ class CityTableViewCell: UITableViewCell {
     
     @IBOutlet private var nameLabel: UILabel!
     @IBOutlet private var tempLabel: UILabel!
-    @IBOutlet private var timeLabel: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()
     }
     
-    func configure(name: String, temp: String, time: String) {
+    func configure(name: String, temp: Double?) {
         nameLabel.text = name
-        tempLabel.text = temp
-        timeLabel.text = time
+        tempLabel.text = temp != nil ? "\(Int(floor(temp!)))°" : "---"
     }
 
 }

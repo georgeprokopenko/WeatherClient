@@ -10,7 +10,7 @@ import UIKit
 
 enum Screen {
     case cityList
-    case forecast
+    case forecast(for: WeatherCity)
 }
 
 class Router: NSObject {
@@ -26,9 +26,8 @@ class Router: NSObject {
         switch screen {
         case .cityList:
             controller = cityListModule()
-        case .forecast:
-            print()
-            //controller = detailModule(character)
+        case .forecast(let city):
+            controller = forecastModule(for: city)
         }
         
         if UIApplication.shared.keyWindow != nil {
@@ -42,16 +41,17 @@ class Router: NSObject {
     
     private func cityListModule() -> CityListViewController {
         let module = CityListViewController.instantiateFromStoryboard()
-        module.viewModel = SearchViewModel(serviceFactory: serviceFactory)
-        searchModule.router = self
-        return searchModule
+        module.presenter = CityListPresenter(serviceFactory: serviceFactory)
+        module.router = self
+        return module
     }
 
-    private func detailModule(_ object: Character) -> DetailViewController {
-        let detailModule = DetailViewController.instantiateFromStoryboard()
-        detailModule.viewModel = DetailViewModel(character: object)
-        detailModule.router = self
-        return detailModule
+    private func forecastModule(for city: WeatherCity) -> ForecastViewController {
+        let module = ForecastViewController.instantiateFromStoryboard()
+        module.presenter = ForecastPresenter(serviceFactory: serviceFactory)
+        module.presenter.configure(with: city)
+        module.router = self
+        return module
     }
     
     private var window: UIWindow!
