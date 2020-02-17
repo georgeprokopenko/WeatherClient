@@ -12,7 +12,8 @@ class ForecastViewController: RoutableViewController<ForecastPresenting> {
     @IBOutlet private var cityNameLabel: UILabel!
     @IBOutlet private var conditionLabel: UILabel!
     @IBOutlet private var temperatureLabel: UILabel!
-
+    @IBOutlet private var collectionView: UICollectionView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         bindPresenter()
@@ -23,12 +24,33 @@ class ForecastViewController: RoutableViewController<ForecastPresenting> {
         presenter.item.addListener(skipCurrent: true) { [weak self] item in
             self?.cityNameLabel.text = item?.name
             self?.conditionLabel.text = item?.currentWeather?.conditionName
-
-            if let temp = item?.currentWeather?.temperature.value {
-                self?.temperatureLabel.text = "\(Int(floor(temp)))°"
-            } else {
-                self?.temperatureLabel.text = "---"
-            }
+            self?.temperatureLabel.text = TemperatureFormatter.readableTemp(
+                                            from: item?.currentWeather?.temperature.value)
         }
+        
+        presenter.forecastItems.addListener(skipCurrent: true) { [weak self] _ in
+            self?.collectionView.reloadData()
+        }
+    }
+}
+
+extension ForecastViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return presenter.forecastItems.value.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: ForecastCollectionViewCell.identifier,
+            for: indexPath) as? ForecastCollectionViewCell else { return UICollectionViewCell() }
+        
+        let item = presenter.forecastItems.value[indexPath.row]
+        cell.configure(day: item.date.dayOfWeek,
+        date: item.date.shortDate,
+        temp: item.temperature.value,
+        condition: item.conditionName)
+        
+        return cell
     }
 }

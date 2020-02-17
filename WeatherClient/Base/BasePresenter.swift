@@ -10,5 +10,6 @@ import Foundation
 
 protocol BasePresenter {
     init(serviceFactory: ServiceFactory)
+    
     func viewDidLoad()
 }

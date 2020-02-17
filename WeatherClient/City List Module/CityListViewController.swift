@@ -9,8 +9,8 @@
 import UIKit
 
 class CityListViewController: RoutableViewController<CityListPresenting> {
-    @IBOutlet private var tableView: UITableView!
-    @IBOutlet weak var spinner: UIActivityIndicatorView!
+    @IBOutlet private weak var tableView: UITableView!
+    @IBOutlet private weak var spinner: UIActivityIndicatorView!
 
     private enum Constants {
         static let ok = "OK"
@@ -28,7 +28,7 @@ class CityListViewController: RoutableViewController<CityListPresenting> {
     }
 
     private func bindPresenter() {
-        presenter.items.addListener { [weak self] newValue in
+        presenter.items.addListener { [weak self] _ in
             self?.reloadData()
         }
         presenter.isLoading.addListener { [weak self] newValue in

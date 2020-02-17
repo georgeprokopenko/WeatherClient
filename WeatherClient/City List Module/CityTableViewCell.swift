@@ -14,13 +14,8 @@ class CityTableViewCell: UITableViewCell {
     @IBOutlet private var nameLabel: UILabel!
     @IBOutlet private var tempLabel: UILabel!
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-    }
-    
     func configure(name: String, temp: Double?) {
         nameLabel.text = name
-        tempLabel.text = temp != nil ? "\(Int(floor(temp!)))°" : "---"
+        tempLabel.text = TemperatureFormatter.readableTemp(from: temp)
     }
-
 }

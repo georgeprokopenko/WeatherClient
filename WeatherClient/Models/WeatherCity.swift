@@ -13,6 +13,7 @@ class WeatherData: Object {
     let temperature = RealmOptional<Double>()
     let pressure = RealmOptional<Int>()
     let humidity = RealmOptional<Int>()
+    @objc dynamic var date: Date = Date()
     @objc dynamic var conditionName: String = ""
     @objc dynamic var conditionDescription: String = ""
 
@@ -21,6 +22,7 @@ class WeatherData: Object {
         self.temperature.value = response.main.temp
         self.pressure.value = response.main.pressure
         self.humidity.value = response.main.humidity
+        self.date = Date.dateFromString(string: response.date) ?? Date()
         self.conditionName = response.weather.first?.main ?? ""
         self.conditionDescription = response.weather.first?.description ?? ""
     }
@@ -39,5 +41,10 @@ class WeatherCity: Object {
         self.init()
         self.name = response.name ?? ""
         self.currentWeather = WeatherData(with: response)
+    }
+    
+    convenience init(name: String) {
+        self.init()
+        self.name = name
     }
 }

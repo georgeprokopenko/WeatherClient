@@ -21,15 +21,18 @@ class CityListPresenter: CityListPresenting {
     var items = Property<[WeatherCity]?>([])
     var isLoading = Property<Bool>(false)
 
+    private enum Constants {
+        static let preloadedCities = ["Moscow", "Bangkok"]
+    }
+    
     func viewDidLoad() {
-        updateWeather()
-        loadSavedCities()
+        preloadCities()
+        updateWeatherForSavedCities()
     }
 
     func getWeather(for cityName: String, completion: ((_ success: Bool) -> Void)?) {
         isLoading.value = true
         networkService.fetchCurrentWeather(for: cityName) { [weak self] response in
-            completion?(response != nil)
             self?.isLoading.value = false
 
             if let response = response {
@@ -39,7 +42,9 @@ class CityListPresenter: CityListPresenting {
                 if let items = self?.items.value, !items.contains(city) {
                     self?.items.value?.insert(city, at: 0)
                 }
+                
             }
+            completion?(response != nil)
         }
     }
 
@@ -52,11 +57,22 @@ class CityListPresenter: CityListPresenting {
     
     // MARK: Private
 
-    private func updateWeather() {
+    private func preloadCities() {
+        if UserDefaults.isFirstLaunch() {
+            Constants.preloadedCities.forEach(
+                { databaseService.saveObject( WeatherCity(name: $0) )})
+        }
+    }
+    
+    private func updateWeatherForSavedCities() {
         guard let storedCities = databaseService.savedObjects(type: WeatherCity.self) else { return }
 
         for city in storedCities {
-            getWeather(for: city.name, completion: nil)
+            getWeather(for: city.name, completion: { [weak self] _ in
+                if city == storedCities.last {
+                    self?.loadSavedCities()
+                }
+            })
         }
     }
 

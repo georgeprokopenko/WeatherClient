@@ -28,26 +28,3 @@ struct WCAPIForecastResponse: Codable {
         city = try nestedContainer.decode(String.self, forKey: .name)
     }
 }
-
-struct WCAPIForecastCity: Codable {
-    let name: String
-}
-
-struct WCAPIForecast_Item: Codable {
-    let date: String?
-    let main: WCAPIWeatherMainData
-    let weather: [WCAPIWeatherCondition]
-
-    private enum CodingKeys: String, CodingKey {
-        case date = "dt_txt"
-        case main
-        case weather
-    }
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        date = try? container.decode(String.self, forKey: .date)
-        main = try container.decode(WCAPIWeatherMainData.self, forKey: .main)
-        weather = try container.decode([WCAPIWeatherCondition].self, forKey: .weather)
-    }
-}
