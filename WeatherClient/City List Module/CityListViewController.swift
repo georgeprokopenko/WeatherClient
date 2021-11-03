@@ -9,8 +9,8 @@
 import UIKit
 
 class CityListViewController: RoutableViewController<CityListPresenting> {
-    @IBOutlet private weak var tableView: UITableView!
     @IBOutlet private weak var spinner: UIActivityIndicatorView!
+    @IBOutlet private weak var tableView: UITableView!
 
     private enum Constants {
         static let ok = "OK"

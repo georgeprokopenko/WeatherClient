@@ -34,7 +34,7 @@ class WeatherCity: Object {
     dynamic var forecast = List<WeatherData>()
 
     override class func primaryKey() -> String? {
-        return "name"
+        return #keyPath(name)
     }
 
     convenience init(with response: WCAPIWeatherResponse) {
